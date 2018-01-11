@@ -9,7 +9,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2017 STMicroelectronics
+  * COPYRIGHT(c) 2018 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -49,6 +49,10 @@
 
 #define NSS_Pin GPIO_PIN_6
 #define NSS_GPIO_Port GPIOF
+#define LED_GREEN_Pin GPIO_PIN_14
+#define LED_GREEN_GPIO_Port GPIOF
+#define LED_RED_Pin GPIO_PIN_7
+#define LED_RED_GPIO_Port GPIOE
 
 /* ########################## Assert Selection ############################## */
 /**

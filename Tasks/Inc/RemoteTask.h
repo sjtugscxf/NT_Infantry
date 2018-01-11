@@ -15,6 +15,8 @@
 #include "includes.h"
 
 #define RC_UART huart1
+#define MANIFOLD_UART huart3
+#define JUDGE_UART huart6
 
 
 #define STICK_TO_CHASSIS_SPEED_REF_FACT     2.f
@@ -129,12 +131,6 @@ typedef __packed struct
 	 uint8_t buf_end_index;
 }RemoteSwitch_t;
 
-//**暂时写在这里，理论上应该写在裁判系统的Task中**//
-typedef __packed enum
-{
-	ONLINE,
-	OFFLINE
-}JudgeState_e;
 
 
 extern ChassisSpeed_Ref_t ChassisSpeedRef; 

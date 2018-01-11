@@ -13,7 +13,6 @@
 uint8_t rc_data[18];
 RC_Ctl_t RC_CtrlData;
 InputMode_e inputmode = REMOTE_INPUT; 
-JudgeState_e JUDGE_State = OFFLINE;	//这个应该声明为extern，本体声明写在裁判系统的Task中
 ChassisSpeed_Ref_t ChassisSpeedRef; 
 extern FrictionWheelState_e FrictionWheelState;
 RemoteSwitch_t g_switch1;
@@ -120,50 +119,50 @@ void MouseKeyControlProcess(Mouse *mouse, Key *key)
 		}
 
 		/*裁判系统离线时的功率限制方式*/
-		if(JUDGE_State == OFFLINE)
-		{
-			if(abs(ChassisSpeedRef.forward_back_ref) + abs(ChassisSpeedRef.left_right_ref) > 500)
-			{
-				if(ChassisSpeedRef.forward_back_ref > 325)
-				{
-				ChassisSpeedRef.forward_back_ref =  325 +  (ChassisSpeedRef.forward_back_ref - 325) * 0.15f;
-				}
-				else if(ChassisSpeedRef.forward_back_ref < -325)
-				{
-				ChassisSpeedRef.forward_back_ref =  -325 +  (ChassisSpeedRef.forward_back_ref + 325) * 0.15f;
-				}
-				if(ChassisSpeedRef.left_right_ref > 300)
-				{
-				ChassisSpeedRef.left_right_ref =  300 +  (ChassisSpeedRef.left_right_ref - 300) * 0.15f;
-				}
-				else if(ChassisSpeedRef.left_right_ref < -300)
-				{
-				ChassisSpeedRef.left_right_ref =  -300 +  (ChassisSpeedRef.left_right_ref + 300) * 0.15f;
-				}
-			}
+//		if(JUDGE_State == OFFLINE)
+//		{
+//			if(abs(ChassisSpeedRef.forward_back_ref) + abs(ChassisSpeedRef.left_right_ref) > 500)
+//			{
+//				if(ChassisSpeedRef.forward_back_ref > 325)
+//				{
+//				ChassisSpeedRef.forward_back_ref =  325 +  (ChassisSpeedRef.forward_back_ref - 325) * 0.15f;
+//				}
+//				else if(ChassisSpeedRef.forward_back_ref < -325)
+//				{
+//				ChassisSpeedRef.forward_back_ref =  -325 +  (ChassisSpeedRef.forward_back_ref + 325) * 0.15f;
+//				}
+//				if(ChassisSpeedRef.left_right_ref > 300)
+//				{
+//				ChassisSpeedRef.left_right_ref =  300 +  (ChassisSpeedRef.left_right_ref - 300) * 0.15f;
+//				}
+//				else if(ChassisSpeedRef.left_right_ref < -300)
+//				{
+//				ChassisSpeedRef.left_right_ref =  -300 +  (ChassisSpeedRef.left_right_ref + 300) * 0.15f;
+//				}
+//			}
 
-			if ((mouse->x < -2.6) || (mouse->x > 2.6))
-			{
-				if(abs(ChassisSpeedRef.forward_back_ref) + abs(ChassisSpeedRef.left_right_ref) > 400)
-				{
-					if(ChassisSpeedRef.forward_back_ref > 250){
-					 ChassisSpeedRef.forward_back_ref =  250 +  (ChassisSpeedRef.forward_back_ref - 250) * 0.15f;
-					}
-					else if(ChassisSpeedRef.forward_back_ref < -250)
-					{
-						ChassisSpeedRef.forward_back_ref =  -250 +  (ChassisSpeedRef.forward_back_ref + 250) * 0.15f;
-					}
-					if(ChassisSpeedRef.left_right_ref > 250)
-					{
-					 ChassisSpeedRef.left_right_ref =  250 +  (ChassisSpeedRef.left_right_ref - 250) * 0.15f;
-					}
-					else if(ChassisSpeedRef.left_right_ref < -250)
-					{
-						ChassisSpeedRef.left_right_ref =  -250 +  (ChassisSpeedRef.left_right_ref + 250) * 0.15f;
-					}
-				}
-			}
-		}
+//			if ((mouse->x < -2.6) || (mouse->x > 2.6))
+//			{
+//				if(abs(ChassisSpeedRef.forward_back_ref) + abs(ChassisSpeedRef.left_right_ref) > 400)
+//				{
+//					if(ChassisSpeedRef.forward_back_ref > 250){
+//					 ChassisSpeedRef.forward_back_ref =  250 +  (ChassisSpeedRef.forward_back_ref - 250) * 0.15f;
+//					}
+//					else if(ChassisSpeedRef.forward_back_ref < -250)
+//					{
+//						ChassisSpeedRef.forward_back_ref =  -250 +  (ChassisSpeedRef.forward_back_ref + 250) * 0.15f;
+//					}
+//					if(ChassisSpeedRef.left_right_ref > 250)
+//					{
+//					 ChassisSpeedRef.left_right_ref =  250 +  (ChassisSpeedRef.left_right_ref - 250) * 0.15f;
+//					}
+//					else if(ChassisSpeedRef.left_right_ref < -250)
+//					{
+//						ChassisSpeedRef.left_right_ref =  -250 +  (ChassisSpeedRef.left_right_ref + 250) * 0.15f;
+//					}
+//				}
+//			}
+//		}
 		
 		MouseShootControl(mouse);
 	}
@@ -287,5 +286,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		RemoteDataProcess(rc_data);				//遥控器数据解算
 		HAL_UART_AbortReceive(&RC_UART);
 		HAL_UART_Receive_DMA(&RC_UART, rc_data, 18);
+	}
+	else if(UartHandle == &MANIFOLD_UART)
+	{
+		manifoldUartRxCpltCallback();  //妙算信号数据解算
+	}
+	else if(UartHandle == &JUDGE_UART)
+	{
+		judgeUartRxCpltCallback();  //裁判系统数据解算
 	}
 }   
