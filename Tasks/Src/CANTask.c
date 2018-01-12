@@ -68,7 +68,12 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan){
 	HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(USART1_IRQn);
+	HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_DisableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+		HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 	if(hcan == &CMGMMOTOR_CAN){//CAN1数据
 		switch(CMGMCanRxMsg.StdId){
 			case CMFL_RXID:
@@ -132,7 +137,12 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan){
 	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(USART1_IRQn);
+  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_EnableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+	  HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 }
 
 //单轴陀螺仪初始化，在主控制任务中，开机三秒后执行
@@ -158,7 +168,12 @@ void GYRO_RST(void)
 	HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(USART1_IRQn);
+	HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_DisableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+		HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 	if(HAL_CAN_Transmit_IT(&ZGYRO_CAN) != HAL_OK)
 	{
 		Error_Handler();
@@ -166,5 +181,10 @@ void GYRO_RST(void)
 	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(USART1_IRQn);
+  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_EnableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+	  HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 }

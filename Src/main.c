@@ -104,6 +104,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USART6_UART_Init();
   MX_TIM7_Init();
+  MX_TIM10_Init();
 
   /* USER CODE BEGIN 2 */
 	//各模块初始化
@@ -111,9 +112,19 @@ int main(void)
 	InitMPU6500();
 	CMControlInit();
 	InitCanReception();
+	#ifdef DEBUG_MODE
+	ctrlUartInit();
+	HAL_TIM_Base_Start_IT(&htim10);
+	#endif
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_TIM_Base_Start_IT(&htim7);
 	InitUserTimer();
+	HAL_NVIC_DisableIRQ(USART2_IRQn);
+	HAL_NVIC_DisableIRQ(USART3_IRQn);
+	HAL_NVIC_DisableIRQ(USART6_IRQn);
+	HAL_NVIC_DisableIRQ(DMA1_Stream1_IRQn);
+	HAL_NVIC_DisableIRQ(DMA1_Stream5_IRQn);
+	HAL_NVIC_DisableIRQ(DMA2_Stream1_IRQn);
   /* USER CODE END 2 */
 
   /* Infinite loop */

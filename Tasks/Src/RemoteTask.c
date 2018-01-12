@@ -290,13 +290,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
 	if(UartHandle == &RC_UART){
 		rc_update = 1;
-		//RemoteDataProcess(rc_data);				//遥控器数据解算
-		//HAL_UART_AbortReceive(&RC_UART);
-		//HAL_UART_Receive_DMA(&RC_UART, rc_data, 18);
 	}
 	else if(UartHandle == &MANIFOLD_UART)
 	{
-		manifoldUartRxCpltCallback();  //妙算信号数据解算
+		//manifoldUartRxCpltCallback();  //妙算信号数据解算
+		#ifdef DEBUG_MODE
+		ctrlUartRxCpltCallback();
+		#endif
 	}
 	else if(UartHandle == &JUDGE_UART)
 	{

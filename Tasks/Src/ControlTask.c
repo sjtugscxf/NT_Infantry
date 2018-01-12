@@ -12,8 +12,8 @@
 #include "includes.h"
 
 ///*通过define使一套程序使用多台车*/
-//#define INFANTRY_1
-#define INFANTRY_4
+#define INFANTRY_1
+//#define INFANTRY_4
 //#define INFANTRY_5   
 
 #define LED_GREEN_TOGGLE() HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin)
@@ -202,7 +202,12 @@ void setCMMotor()
 	HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(USART1_IRQn);
+	HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_DisableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+		HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 	if(HAL_CAN_Transmit_IT(&CMGMMOTOR_CAN) != HAL_OK)
 	{
 		Error_Handler();
@@ -211,7 +216,12 @@ void setCMMotor()
 	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(USART1_IRQn);
+  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_EnableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+	  HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 }
 
 //云台电机CAN信号控制
@@ -238,7 +248,12 @@ void setGMMotor()
 	HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_DisableIRQ(USART1_IRQn);
+	HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_DisableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+		HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 	if(HAL_CAN_Transmit_IT(&CMGMMOTOR_CAN) != HAL_OK)
 	{
 		Error_Handler();
@@ -246,7 +261,12 @@ void setGMMotor()
 	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(USART1_IRQn);
+  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+	HAL_NVIC_EnableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+	  HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
 }
 
 #define NORMALIZE_ANGLE180(angle) angle = ((angle) > 180) ? ((angle) - 360) : (((angle) < -180) ? (angle) + 360 : angle)
@@ -262,16 +282,16 @@ fw_PID_Regulator_t yawSpeedPID = fw_PID_INIT(30.0, 0.0, 5, 10000.0, 10000.0, 100
 #endif
 #ifdef INFANTRY_4
 fw_PID_Regulator_t pitchPositionPID = fw_PID_INIT(8.0, 0.0, 0.0, 10000.0, 10000.0, 10000.0, 10000.0);
-fw_PID_Regulator_t yawPositionPID = fw_PID_INIT(5.0, 0.0, 0.5, 10000.0, 10000.0, 10000.0, 10000.0);//等幅振荡P37.3 I11.9 D3.75  原26.1 8.0 1.1
-fw_PID_Regulator_t pitchSpeedPID = fw_PID_INIT(40.0, 0.0, 15.0, 10000.0, 10000.0, 10000.0, 3500.0);
-fw_PID_Regulator_t yawSpeedPID = fw_PID_INIT(30.0, 0.0, 5, 10000.0, 10000.0, 10000.0, 4000.0);
+fw_PID_Regulator_t yawPositionPID = fw_PID_INIT(8.0, 0.0, 0.5, 10000.0, 10000.0, 10000.0, 10000.0);//等幅振荡P37.3 I11.9 D3.75  原26.1 8.0 1.1
+fw_PID_Regulator_t pitchSpeedPID = fw_PID_INIT(40.0, 0.0, 15.0, 10000.0, 10000.0, 10000.0, 4000.0);
+fw_PID_Regulator_t yawSpeedPID = fw_PID_INIT(70.0, 0.0, 5, 10000.0, 10000.0, 10000.0, 4000.0);
 #define yaw_zero 2806//2840
 #define pitch_zero 5009 
 #endif
 #ifdef INFANTRY_1
 fw_PID_Regulator_t pitchPositionPID = fw_PID_INIT(8.0, 0.0, 0.0, 10000.0, 10000.0, 10000.0, 10000.0);
 fw_PID_Regulator_t yawPositionPID = fw_PID_INIT(5.0, 0.0, 0.5, 10000.0, 10000.0, 10000.0, 10000.0);//等幅振荡P37.3 I11.9 D3.75  原26.1 8.0 1.1
-fw_PID_Regulator_t pitchSpeedPID = fw_PID_INIT(40.0, 0.0, 15.0, 10000.0, 10000.0, 10000.0, 3500.0);
+fw_PID_Regulator_t pitchSpeedPID = fw_PID_INIT(40.0, 0.0, 15.0, 10000.0, 10000.0, 10000.0, 4000.0);
 fw_PID_Regulator_t yawSpeedPID = fw_PID_INIT(30.0, 0.0, 5, 10000.0, 10000.0, 10000.0, 4000.0);
 #define yaw_zero 4708//100
 #define pitch_zero 6400
@@ -382,9 +402,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				RemoteDataProcess(rc_data);				//遥控器数据解算
 		    HAL_UART_AbortReceive(&RC_UART);
 		    HAL_UART_Receive_DMA(&RC_UART, rc_data, 18);
+				rc_cnt = 0;
 			}
 			else
 			{
+				if(rc_first_frame) WorkState = PREPARE_STATE;
 				HAL_UART_AbortReceive(&RC_UART);
 		    HAL_UART_Receive_DMA(&RC_UART, rc_data, 18);
 				rc_cnt = 0;
@@ -392,5 +414,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			}
 			rc_update = 0;
 		}
+	}
+	else if (htim->Instance == htim10.Instance)  //10ms，处理上位机数据，优先级不高
+	{
+		#ifdef DEBUG_MODE
+		zykProcessData();
+		#endif
 	}
 }

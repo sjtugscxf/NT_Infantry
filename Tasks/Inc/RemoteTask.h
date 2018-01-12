@@ -16,6 +16,7 @@
 
 #define RC_UART huart1
 #define MANIFOLD_UART huart3
+#define CTRL_UART huart3
 #define JUDGE_UART huart6
 
 
