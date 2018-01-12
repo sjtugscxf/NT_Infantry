@@ -11,6 +11,11 @@
   */
 #include "includes.h"
 
+///*通过define使一套程序使用多台车*/
+//#define INFANTRY_1
+#define INFANTRY_4
+//#define INFANTRY_5   
+
 #define LED_GREEN_TOGGLE() HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin)
 #define LED_RED_TOGGLE()   HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin)
 #define LED_GREEN_OFF()     HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin,GPIO_PIN_SET)
@@ -54,7 +59,7 @@ void ControlCMFL(void)
 	{		
 		CM1SpeedPID.ref =  ChassisSpeedRef.forward_back_ref*0.075 
 											 + ChassisSpeedRef.left_right_ref*0.075 
-											 + ChassisSpeedRef.rotate_ref;	
+											 + ChassisSpeedRef.rotate_ref*0.075;	
 		CM1SpeedPID.ref = 160 * CM1SpeedPID.ref;
 			
 			
@@ -77,7 +82,7 @@ void ControlCMFR(void)
 	{		
 		CM2SpeedPID.ref = - ChassisSpeedRef.forward_back_ref*0.075 
 										 + ChassisSpeedRef.left_right_ref*0.075 
-										 + ChassisSpeedRef.rotate_ref;
+										 + ChassisSpeedRef.rotate_ref*0.075;
 		CM2SpeedPID.ref = 160 * CM2SpeedPID.ref;
 			
 			
@@ -100,7 +105,7 @@ void ControlCMBL(void)
 	{		
 		CM3SpeedPID.ref =  ChassisSpeedRef.forward_back_ref*0.075 
 											 - ChassisSpeedRef.left_right_ref*0.075 
-											 + ChassisSpeedRef.rotate_ref;
+											 + ChassisSpeedRef.rotate_ref*0.075;
 		CM3SpeedPID.ref = 160 * CM3SpeedPID.ref;
 			
 			
@@ -123,7 +128,7 @@ void ControlCMBR(void)
 	{		
 		CM4SpeedPID.ref = - ChassisSpeedRef.forward_back_ref*0.075 
 											 - ChassisSpeedRef.left_right_ref*0.075 
-											 + ChassisSpeedRef.rotate_ref;
+											 + ChassisSpeedRef.rotate_ref*0.075;
 		CM4SpeedPID.ref = 160 * CM4SpeedPID.ref;
 			
 			
@@ -245,12 +250,33 @@ void setGMMotor()
 }
 
 #define NORMALIZE_ANGLE180(angle) angle = ((angle) > 180) ? ((angle) - 360) : (((angle) < -180) ? (angle) + 360 : angle)
+
+#ifdef INFANTRY_5
 fw_PID_Regulator_t pitchPositionPID = fw_PID_INIT(8.0, 0.0, 0.0, 10000.0, 10000.0, 10000.0, 10000.0);
-fw_PID_Regulator_t yawPositionPID = fw_PID_INIT(5.0, 0.0, 0.5, 10000.0, 10000.0, 10000.0, 10000.0);
+fw_PID_Regulator_t yawPositionPID = fw_PID_INIT(5.0, 0.0, 0.5, 10000.0, 10000.0, 10000.0, 10000.0);//等幅振荡P37.3 I11.9 D3.75  原26.1 8.0 1.1
 fw_PID_Regulator_t pitchSpeedPID = fw_PID_INIT(40.0, 0.0, 15.0, 10000.0, 10000.0, 10000.0, 3500.0);
 fw_PID_Regulator_t yawSpeedPID = fw_PID_INIT(30.0, 0.0, 5, 10000.0, 10000.0, 10000.0, 4000.0);
-#define yaw_zero 4708  //100
+//手动标定0点
+#define yaw_zero 2163//2200
+#define pitch_zero 3275
+#endif
+#ifdef INFANTRY_4
+fw_PID_Regulator_t pitchPositionPID = fw_PID_INIT(8.0, 0.0, 0.0, 10000.0, 10000.0, 10000.0, 10000.0);
+fw_PID_Regulator_t yawPositionPID = fw_PID_INIT(5.0, 0.0, 0.5, 10000.0, 10000.0, 10000.0, 10000.0);//等幅振荡P37.3 I11.9 D3.75  原26.1 8.0 1.1
+fw_PID_Regulator_t pitchSpeedPID = fw_PID_INIT(40.0, 0.0, 15.0, 10000.0, 10000.0, 10000.0, 3500.0);
+fw_PID_Regulator_t yawSpeedPID = fw_PID_INIT(30.0, 0.0, 5, 10000.0, 10000.0, 10000.0, 4000.0);
+#define yaw_zero 2806//2840
+#define pitch_zero 5009 
+#endif
+#ifdef INFANTRY_1
+fw_PID_Regulator_t pitchPositionPID = fw_PID_INIT(8.0, 0.0, 0.0, 10000.0, 10000.0, 10000.0, 10000.0);
+fw_PID_Regulator_t yawPositionPID = fw_PID_INIT(5.0, 0.0, 0.5, 10000.0, 10000.0, 10000.0, 10000.0);//等幅振荡P37.3 I11.9 D3.75  原26.1 8.0 1.1
+fw_PID_Regulator_t pitchSpeedPID = fw_PID_INIT(40.0, 0.0, 15.0, 10000.0, 10000.0, 10000.0, 3500.0);
+fw_PID_Regulator_t yawSpeedPID = fw_PID_INIT(30.0, 0.0, 5, 10000.0, 10000.0, 10000.0, 4000.0);
+#define yaw_zero 4708//100
 #define pitch_zero 6400
+#endif
+
 float yawRealAngle = 0.0;
 float pitchRealAngle = 0.0;
 float gap_angle = 0.0;
@@ -265,7 +291,7 @@ void ControlRotate(void)
 		CMRotatePID.ref = 0;
 		CMRotatePID.fdb = gap_angle;
 		CMRotatePID.Calc(&CMRotatePID);   
-		ChassisSpeedRef.rotate_ref = CMRotatePID.output;
+		ChassisSpeedRef.rotate_ref = CMRotatePID.output * 13 + rotate_forward * 90 + ChassisSpeedRef.forward_back_ref * 0.01 + ChassisSpeedRef.left_right_ref * 0.01;
 	}
 }
 

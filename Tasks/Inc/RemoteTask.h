@@ -19,7 +19,7 @@
 #define JUDGE_UART huart6
 
 
-#define STICK_TO_CHASSIS_SPEED_REF_FACT     2.f
+#define STICK_TO_CHASSIS_SPEED_REF_FACT     0.45f
 #define STICK_TO_PITCH_ANGLE_INC_FACT       0.008f
 #define STICK_TO_YAW_ANGLE_INC_FACT         0.005f
 
@@ -132,7 +132,7 @@ typedef __packed struct
 }RemoteSwitch_t;
 
 
-
+extern float rotate_forward;
 extern ChassisSpeed_Ref_t ChassisSpeedRef; 
 extern InputMode_e inputmode;
 extern float yawAngleTarget;
