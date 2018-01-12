@@ -138,6 +138,12 @@ extern InputMode_e inputmode;
 extern float yawAngleTarget;
 extern float pitchAngleTarget;
 
+extern uint8_t rc_data[18];
+extern uint8_t rc_first_frame;
+extern uint8_t rc_update;
+extern uint8_t rc_cnt;
+
+void RemoteDataProcess(uint8_t *pData);
 void InitRemoteControl();
 void RemoteTaskInit();
 
