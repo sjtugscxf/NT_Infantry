@@ -19,12 +19,14 @@ Motor6623RxMsg_t GMPITCHRx,GMYAWRx;
 float ZGyroModuleAngle = 0.0;
 
 uint8_t can1_update = 1;
+uint8_t can1_type = 0;
 uint8_t can2_update = 1;
 /********************CAN发送*****************************/
 void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef* hcan)
 {
 	if(hcan == &CMGMMOTOR_CAN){
 		can1_update = 1;
+		can1_type = 1 - can1_type;
 	}
 	else if(hcan == &ZGYRO_CAN)
 	{
@@ -158,28 +160,26 @@ void GYRO_RST(void)
 
 	if(can2_update)
 	{
-		HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
-		HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
-		HAL_NVIC_DisableIRQ(USART1_IRQn);
-		HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
-		HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
-		HAL_NVIC_DisableIRQ(TIM7_IRQn);
-		#ifdef DEBUG_MODE
-			HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
-		#endif
+//		HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
+//		HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
+//		HAL_NVIC_DisableIRQ(USART1_IRQn);
+//		HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
+//		HAL_NVIC_DisableIRQ(TIM7_IRQn);
+//		#ifdef DEBUG_MODE
+//			HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+//		#endif
 		if(HAL_CAN_Transmit_IT(&ZGYRO_CAN) != HAL_OK)
 		{
 			Error_Handler();
 		}
 		can2_update = 0;
-		HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
-		HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
-		HAL_NVIC_EnableIRQ(USART1_IRQn);
-		HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
-		HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
-		HAL_NVIC_EnableIRQ(TIM7_IRQn);
-		#ifdef DEBUG_MODE
-			HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
-		#endif
+//		HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+//		HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
+//		HAL_NVIC_EnableIRQ(USART1_IRQn);
+//		HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+//		HAL_NVIC_EnableIRQ(TIM7_IRQn);
+//		#ifdef DEBUG_MODE
+//			HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+//		#endif
   }
 }

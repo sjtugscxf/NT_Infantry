@@ -32,12 +32,6 @@ PID_Regulator_t CM2SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 PID_Regulator_t CM3SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 PID_Regulator_t CM4SpeedPID = CHASSIS_MOTOR_SPEED_PID_DEFAULT;
 
-static uint8_t s_yawCount = 0;
-static uint8_t s_pitchCount = 0;
-static uint8_t s_CMFLCount = 0;
-static uint8_t s_CMFRCount = 0;
-static uint8_t s_CMBLCount = 0;
-static uint8_t s_CMBRCount = 0;
 int16_t CMFLIntensity = 0, CMFRIntensity = 0, CMBLIntensity = 0, CMBRIntensity = 0;
 int16_t yawIntensity = 0;		
 int16_t pitchIntensity = 0;
@@ -54,95 +48,59 @@ void CMControlInit(void)
 
 //单个底盘电机的控制，下同
 void ControlCMFL(void)
-{		
-	if(s_CMFLCount == 1)
-	{		
-		CM1SpeedPID.ref =  ChassisSpeedRef.forward_back_ref*0.075 
+{			
+	CM1SpeedPID.ref =  ChassisSpeedRef.forward_back_ref*0.075 
 											 + ChassisSpeedRef.left_right_ref*0.075 
 											 + ChassisSpeedRef.rotate_ref*0.075;	
-		CM1SpeedPID.ref = 160 * CM1SpeedPID.ref;
+	CM1SpeedPID.ref = 160 * CM1SpeedPID.ref;
 			
 			
-		CM1SpeedPID.fdb = CMFLRx.RotateSpeed;
+	CM1SpeedPID.fdb = CMFLRx.RotateSpeed;
 
-		CM1SpeedPID.Calc(&CM1SpeedPID);
-		CMFLIntensity = CHASSIS_SPEED_ATTENUATION * CM1SpeedPID.output;
-			
-		s_CMFLCount = 0;
-	}
-	else
-	{
-		s_CMFLCount++;
-	}
+	CM1SpeedPID.Calc(&CM1SpeedPID);
+	CMFLIntensity = CHASSIS_SPEED_ATTENUATION * CM1SpeedPID.output;
 }
 
 void ControlCMFR(void)
-{		
-	if(s_CMFRCount == 1)
-	{		
-		CM2SpeedPID.ref = - ChassisSpeedRef.forward_back_ref*0.075 
+{			
+	CM2SpeedPID.ref = - ChassisSpeedRef.forward_back_ref*0.075 
 										 + ChassisSpeedRef.left_right_ref*0.075 
 										 + ChassisSpeedRef.rotate_ref*0.075;
-		CM2SpeedPID.ref = 160 * CM2SpeedPID.ref;
+	CM2SpeedPID.ref = 160 * CM2SpeedPID.ref;
 			
 			
-		CM2SpeedPID.fdb = CMFRRx.RotateSpeed;
+	CM2SpeedPID.fdb = CMFRRx.RotateSpeed;
 
-		CM2SpeedPID.Calc(&CM2SpeedPID);
-		CMFRIntensity = CHASSIS_SPEED_ATTENUATION * CM2SpeedPID.output;
-			
-		s_CMFRCount = 0;
-	}
-	else
-	{
-		s_CMFRCount++;
-	}
+	CM2SpeedPID.Calc(&CM2SpeedPID);
+	CMFRIntensity = CHASSIS_SPEED_ATTENUATION * CM2SpeedPID.output;
 }
 
 void ControlCMBL(void)
 {		
-	if(s_CMBLCount == 1)
-	{		
-		CM3SpeedPID.ref =  ChassisSpeedRef.forward_back_ref*0.075 
+	CM3SpeedPID.ref =  ChassisSpeedRef.forward_back_ref*0.075 
 											 - ChassisSpeedRef.left_right_ref*0.075 
 											 + ChassisSpeedRef.rotate_ref*0.075;
-		CM3SpeedPID.ref = 160 * CM3SpeedPID.ref;
+	CM3SpeedPID.ref = 160 * CM3SpeedPID.ref;
 			
 			
-		CM3SpeedPID.fdb = CMBLRx.RotateSpeed;
+	CM3SpeedPID.fdb = CMBLRx.RotateSpeed;
 
-		CM3SpeedPID.Calc(&CM3SpeedPID);
-		CMBLIntensity = CHASSIS_SPEED_ATTENUATION * CM3SpeedPID.output;
-			
-		s_CMBLCount = 0;
-	}
-	else
-	{
-		s_CMBLCount++;
-	}
+	CM3SpeedPID.Calc(&CM3SpeedPID);
+	CMBLIntensity = CHASSIS_SPEED_ATTENUATION * CM3SpeedPID.output;
 }
 
 void ControlCMBR(void)
 {		
-	if(s_CMBRCount == 1)
-	{		
-		CM4SpeedPID.ref = - ChassisSpeedRef.forward_back_ref*0.075 
+	CM4SpeedPID.ref = - ChassisSpeedRef.forward_back_ref*0.075 
 											 - ChassisSpeedRef.left_right_ref*0.075 
 											 + ChassisSpeedRef.rotate_ref*0.075;
-		CM4SpeedPID.ref = 160 * CM4SpeedPID.ref;
+	CM4SpeedPID.ref = 160 * CM4SpeedPID.ref;
 			
 			
-		CM4SpeedPID.fdb = CMBRRx.RotateSpeed;
+	CM4SpeedPID.fdb = CMBRRx.RotateSpeed;
 
-		CM4SpeedPID.Calc(&CM4SpeedPID);
-		CMBRIntensity = CHASSIS_SPEED_ATTENUATION * CM4SpeedPID.output;
-			
-		s_CMBRCount = 0;
-	}
-	else
-	{
-		s_CMBRCount++;
-	}
+	CM4SpeedPID.Calc(&CM4SpeedPID);
+	CMBRIntensity = CHASSIS_SPEED_ATTENUATION * CM4SpeedPID.output;
 }
 
 //状态机切换
@@ -176,7 +134,7 @@ void WorkStateFSM(void)
 		}break;
 	}
 }
-
+int ijh = 0;
 //底盘电机CAN信号控制
 void setCMMotor()
 {
@@ -197,15 +155,23 @@ void setCMMotor()
 	CMGMMOTOR_CAN.pTxMsg->Data[5] = (uint8_t)CMBLIntensity;
 	CMGMMOTOR_CAN.pTxMsg->Data[6] = (uint8_t)(CMBRIntensity >> 8);
 	CMGMMOTOR_CAN.pTxMsg->Data[7] = (uint8_t)CMBRIntensity;
+	
+//	CMGMMOTOR_CAN.pTxMsg->Data[0] = 0;
+//	CMGMMOTOR_CAN.pTxMsg->Data[1] = 0;
+//	CMGMMOTOR_CAN.pTxMsg->Data[2] = 0;
+//	CMGMMOTOR_CAN.pTxMsg->Data[3] = 0;
+//	CMGMMOTOR_CAN.pTxMsg->Data[4] = 0;
+//	CMGMMOTOR_CAN.pTxMsg->Data[5] = 0;
+//	CMGMMOTOR_CAN.pTxMsg->Data[6] = 0;
+//	CMGMMOTOR_CAN.pTxMsg->Data[7] = 0;
 
-	if(can1_update)
+	if(can1_update == 1 && can1_type == 0)
 	{
 		//CAN通信前关中断
 		HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
 		HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
 		HAL_NVIC_DisableIRQ(USART1_IRQn);
 		HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
-		HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
 		HAL_NVIC_DisableIRQ(TIM7_IRQn);
 		#ifdef DEBUG_MODE
 			HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
@@ -220,7 +186,6 @@ void setCMMotor()
 		HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 		HAL_NVIC_EnableIRQ(USART1_IRQn);
 		HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
-		HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 		HAL_NVIC_EnableIRQ(TIM7_IRQn);
 		#ifdef DEBUG_MODE
 			HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
@@ -240,6 +205,10 @@ void setGMMotor()
 	CMGMMOTOR_CAN.pTxMsg->RTR = CAN_RTR_DATA;
 	CMGMMOTOR_CAN.pTxMsg->DLC = 0x08;
 	
+//	CMGMMOTOR_CAN.pTxMsg->Data[0] = (uint8_t)(yawIntensity >> 8);
+//	CMGMMOTOR_CAN.pTxMsg->Data[1] = (uint8_t)yawIntensity;
+//	CMGMMOTOR_CAN.pTxMsg->Data[2] = (uint8_t)(pitchIntensity >> 8);
+//	CMGMMOTOR_CAN.pTxMsg->Data[3] = (uint8_t)pitchIntensity;
 	CMGMMOTOR_CAN.pTxMsg->Data[0] = (uint8_t)(yawIntensity >> 8);
 	CMGMMOTOR_CAN.pTxMsg->Data[1] = (uint8_t)yawIntensity;
 	CMGMMOTOR_CAN.pTxMsg->Data[2] = (uint8_t)(pitchIntensity >> 8);
@@ -249,13 +218,12 @@ void setGMMotor()
 	CMGMMOTOR_CAN.pTxMsg->Data[6] = 0;
 	CMGMMOTOR_CAN.pTxMsg->Data[7] = 0;
 
-	if(can1_update)
+	if(can1_update == 1 && can1_type == 1)
 	{
 		HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
 		HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
 		HAL_NVIC_DisableIRQ(USART1_IRQn);
 		HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
-		HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
 		HAL_NVIC_DisableIRQ(TIM7_IRQn);
 		#ifdef DEBUG_MODE
 			HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
@@ -269,7 +237,6 @@ void setGMMotor()
 		HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 		HAL_NVIC_EnableIRQ(USART1_IRQn);
 		HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
-		HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 		HAL_NVIC_EnableIRQ(TIM7_IRQn);
 		#ifdef DEBUG_MODE
 			HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
@@ -326,49 +293,32 @@ void ControlRotate(void)
 //控制云台YAW轴
 void ControlYaw(void)
 {
-	if(s_yawCount == 1)
+	uint16_t yawZeroAngle = yaw_zero;
+			
+	yawRealAngle = (GMYAWRx.angle - yawZeroAngle) * 360 / 8192.0f;
+	NORMALIZE_ANGLE180(yawRealAngle);
+			
+	if(WorkState == NORMAL_STATE) 
 	{
-		uint16_t yawZeroAngle = yaw_zero;
-			
-		yawRealAngle = (GMYAWRx.angle - yawZeroAngle) * 360 / 8192.0f;
-		NORMALIZE_ANGLE180(yawRealAngle);
-			
-		if(WorkState == NORMAL_STATE) 
-		{
-			yawRealAngle = -ZGyroModuleAngle;
-		}
+		yawRealAngle = -ZGyroModuleAngle;
+	}
 							
-		yawIntensity = ProcessYawPID(yawAngleTarget, yawRealAngle, -gYroZs);
-		s_yawCount = 0;
-			
-		ControlRotate();
-	}
-	else
-	{
-		s_yawCount++;
-	}
+	yawIntensity = ProcessYawPID(yawAngleTarget, yawRealAngle, -gYroZs);
+	
+	//ControlRotate();
 }
 
 //控制云台pitch轴
 void ControlPitch(void)
 {
-	if(s_pitchCount == 1)
-	{
-		uint16_t pitchZeroAngle = pitch_zero;
+	uint16_t pitchZeroAngle = pitch_zero;
 				
-		pitchRealAngle = -(GMPITCHRx.angle - pitchZeroAngle) * 360 / 8192.0;
-		NORMALIZE_ANGLE180(pitchRealAngle);
+	pitchRealAngle = -(GMPITCHRx.angle - pitchZeroAngle) * 360 / 8192.0;
+	NORMALIZE_ANGLE180(pitchRealAngle);
 
-		MINMAX(pitchAngleTarget, -9.0f, 32);
+	MINMAX(pitchAngleTarget, -9.0f, 32);
 				
-		pitchIntensity = ProcessPitchPID(pitchAngleTarget,pitchRealAngle,-gYroXs);
-				
-		s_pitchCount = 0;
-	}
-	else
-	{
-		s_pitchCount++;
-	}
+	pitchIntensity = ProcessPitchPID(pitchAngleTarget,pitchRealAngle,-gYroXs);
 }
 
 //主控制循环
@@ -388,7 +338,7 @@ void controlLoop()
 		ControlCMBL();
 		ControlCMBR();
 		
-		//setCMMotor();
+		setCMMotor();
 	}
 }
 
@@ -397,8 +347,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim->Instance == htim6.Instance)
 	{
+		HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
 		//主循环在时间中断中启动
 		controlLoop();
+		HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 	}
 	else if (htim->Instance == htim7.Instance)
 	{

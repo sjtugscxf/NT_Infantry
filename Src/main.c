@@ -88,10 +88,26 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+	HAL_NVIC_DisableIRQ(USART2_IRQn);
+	HAL_NVIC_DisableIRQ(USART3_IRQn);
+	HAL_NVIC_DisableIRQ(USART6_IRQn);
+	HAL_NVIC_DisableIRQ(DMA1_Stream1_IRQn);
+	HAL_NVIC_DisableIRQ(DMA1_Stream5_IRQn);
+	HAL_NVIC_DisableIRQ(DMA2_Stream1_IRQn);
+	
+	HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
+	HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
+	HAL_NVIC_DisableIRQ(USART1_IRQn);
+	HAL_NVIC_DisableIRQ(DMA2_Stream2_IRQn);
+	HAL_NVIC_DisableIRQ(TIM7_IRQn);
+	HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
+	#ifdef DEBUG_MODE
+		HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+	
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_CAN1_Init();
@@ -119,12 +135,16 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_TIM_Base_Start_IT(&htim7);
 	InitUserTimer();
-	HAL_NVIC_DisableIRQ(USART2_IRQn);
-	HAL_NVIC_DisableIRQ(USART3_IRQn);
-	HAL_NVIC_DisableIRQ(USART6_IRQn);
-	HAL_NVIC_DisableIRQ(DMA1_Stream1_IRQn);
-	HAL_NVIC_DisableIRQ(DMA1_Stream5_IRQn);
-	HAL_NVIC_DisableIRQ(DMA2_Stream1_IRQn);
+	
+	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+	HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
+	HAL_NVIC_EnableIRQ(USART1_IRQn);
+	HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+	HAL_NVIC_EnableIRQ(TIM7_IRQn);
+	#ifdef DEBUG_MODE
+		HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+	#endif
+	HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
   /* USER CODE END 2 */
 
   /* Infinite loop */

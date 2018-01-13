@@ -54,6 +54,7 @@ extern Motor6623RxMsg_t	GMYAWRx;
 extern float ZGyroModuleAngle;
 
 extern uint8_t can1_update;
+extern uint8_t can1_type;
 extern uint8_t can2_update;
 
 void InitCanReception();
