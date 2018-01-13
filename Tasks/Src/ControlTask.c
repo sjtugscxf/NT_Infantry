@@ -134,7 +134,6 @@ void WorkStateFSM(void)
 		}break;
 	}
 }
-int ijh = 0;
 //底盘电机CAN信号控制
 void setCMMotor()
 {
@@ -155,15 +154,6 @@ void setCMMotor()
 	CMGMMOTOR_CAN.pTxMsg->Data[5] = (uint8_t)CMBLIntensity;
 	CMGMMOTOR_CAN.pTxMsg->Data[6] = (uint8_t)(CMBRIntensity >> 8);
 	CMGMMOTOR_CAN.pTxMsg->Data[7] = (uint8_t)CMBRIntensity;
-	
-//	CMGMMOTOR_CAN.pTxMsg->Data[0] = 0;
-//	CMGMMOTOR_CAN.pTxMsg->Data[1] = 0;
-//	CMGMMOTOR_CAN.pTxMsg->Data[2] = 0;
-//	CMGMMOTOR_CAN.pTxMsg->Data[3] = 0;
-//	CMGMMOTOR_CAN.pTxMsg->Data[4] = 0;
-//	CMGMMOTOR_CAN.pTxMsg->Data[5] = 0;
-//	CMGMMOTOR_CAN.pTxMsg->Data[6] = 0;
-//	CMGMMOTOR_CAN.pTxMsg->Data[7] = 0;
 
 	if(can1_update == 1 && can1_type == 0)
 	{
@@ -205,10 +195,6 @@ void setGMMotor()
 	CMGMMOTOR_CAN.pTxMsg->RTR = CAN_RTR_DATA;
 	CMGMMOTOR_CAN.pTxMsg->DLC = 0x08;
 	
-//	CMGMMOTOR_CAN.pTxMsg->Data[0] = (uint8_t)(yawIntensity >> 8);
-//	CMGMMOTOR_CAN.pTxMsg->Data[1] = (uint8_t)yawIntensity;
-//	CMGMMOTOR_CAN.pTxMsg->Data[2] = (uint8_t)(pitchIntensity >> 8);
-//	CMGMMOTOR_CAN.pTxMsg->Data[3] = (uint8_t)pitchIntensity;
 	CMGMMOTOR_CAN.pTxMsg->Data[0] = (uint8_t)(yawIntensity >> 8);
 	CMGMMOTOR_CAN.pTxMsg->Data[1] = (uint8_t)yawIntensity;
 	CMGMMOTOR_CAN.pTxMsg->Data[2] = (uint8_t)(pitchIntensity >> 8);
@@ -305,7 +291,7 @@ void ControlYaw(void)
 							
 	yawIntensity = ProcessYawPID(yawAngleTarget, yawRealAngle, -gYroZs);
 	
-	//ControlRotate();
+	ControlRotate();
 }
 
 //控制云台pitch轴
