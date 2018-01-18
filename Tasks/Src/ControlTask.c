@@ -325,6 +325,8 @@ void controlLoop()
 		ControlCMBR();
 		
 		setCMMotor();
+		
+		PlateMotorTask();
 	}
 }
 

@@ -107,7 +107,6 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-	
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_CAN1_Init();
@@ -121,6 +120,8 @@ int main(void)
   MX_USART6_UART_Init();
   MX_TIM7_Init();
   MX_TIM10_Init();
+  MX_TIM4_Init();
+  MX_TIM5_Init();
 
   /* USER CODE BEGIN 2 */
 	//各模块初始化
@@ -135,6 +136,7 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_TIM_Base_Start_IT(&htim7);
 	InitUserTimer();
+	plateMotorInit();
 	
 	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
 	HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
