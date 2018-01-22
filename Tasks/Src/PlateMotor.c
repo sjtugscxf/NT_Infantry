@@ -27,14 +27,11 @@ LaunchMode_e launchMode = SINGLE_MULTI;
 RotateDir_e PlateMotorDir = FORWARD;
 
 int RotateAdd =0;
+int32_t last_fdb = 0x0;
+int32_t this_fdb = 0x0;
 
 void PlateMotorTask()
 {
-	//int RotateAdd = 0;
-	int32_t last_fdb = 0x0;
-	int32_t this_fdb = 0x0;
-/*	portTickType xLastWakeTimeQZK;	//RTOS
-	xLastWakeTimeQZK = xTaskGetTickCount();	//RTOS */
 	static int s_count_1s = 0;
 	static int s_stuck_cnt = 0;
 	
