@@ -27,7 +27,7 @@ void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef* hcan)
 {
 	if(hcan == &CMGMMOTOR_CAN){
 		can1_update = 1;
-		can1_type = 1 - can1_type;
+		//can1_type = 1 - can1_type;
 	}
 	else if(hcan == &ZGYRO_CAN)
 	{

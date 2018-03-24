@@ -312,9 +312,9 @@ void controlLoop()
 {
 	WorkStateFSM();
 	
-	if(WorkState != STOP_STATE)
+	if(WorkState == NORMAL_STATE )
 	{
-		ControlYaw();
+		//ControlYaw();
 		ControlPitch();
 		
 		setGMMotor();
